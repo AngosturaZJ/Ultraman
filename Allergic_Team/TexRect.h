@@ -32,7 +32,7 @@ public:
     void moveLeft(float rate=0.01);
     void moveRight(float rate=0.01);
     
-    void jump();
+    void jump(int value);
     
     bool movingLeft;
     

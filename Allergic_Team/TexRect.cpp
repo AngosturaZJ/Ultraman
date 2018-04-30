@@ -8,11 +8,11 @@ TexRect::TexRect (const char* filename, float x=0, float y=0, float w=0.5, float
     glEnable(GL_DEPTH_TEST);
     
     texture_id = SOIL_load_OGL_texture (
-     filename,
-     SOIL_LOAD_AUTO,
-     SOIL_CREATE_NEW_ID,
-     SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-     );
+                                        filename,
+                                        SOIL_LOAD_AUTO,
+                                        SOIL_CREATE_NEW_ID,
+                                        SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+                                        );
     
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -29,6 +29,8 @@ TexRect::TexRect (const char* filename, float x=0, float y=0, float w=0.5, float
     rising = false;
     movingLeft = true;
     
+    xinc = 0.01;
+    yinc = 0.01;
 }
 
 void TexRect::moveUp(float rate){
@@ -39,28 +41,64 @@ void TexRect::moveDown(float rate){
 }
 void TexRect::moveLeft(float rate){
     x -= rate;
+    if (x < -0.99){
+        x = -0.99;
+    }
 }
 void TexRect::moveRight(float rate){
     x += rate;
+    if (x + w > 0.99){
+        x = 0.99 - w;
+    }
 }
 
-void TexRect::jump(){
-    if(rising){
-        y+=yinc;
-        if (movingLeft){
-            x -=xinc;
+void TexRect::jump(int value){
+    if (value == 1){
+        if(rising){
+            y+=yinc;
+            if (movingLeft){
+                x -=xinc;
+            }
+            else {
+                x +=xinc;
+            }
         }
         else {
-            x +=xinc;
+            y-=yinc;
+            if (movingLeft){
+                x -=xinc;
+            }
+            else{
+                x +=xinc;
+            }
         }
     }
-    else {
-        y-=yinc;
-        if (movingLeft){
-            x -=xinc;
+    
+    if (value == 2){
+        if(rising){
+            y+=yinc;
         }
-        else{
-            x +=xinc;
+        else {
+            y-=yinc;
+        }
+    }
+    
+    if (value == 3){
+        if(rising){
+            if (movingLeft){
+                x -=xinc;
+            }
+            else {
+                x +=xinc;
+            }
+        }
+        else {
+            if (movingLeft){
+                x -=xinc;
+            }
+            else{
+                x +=xinc;
+            }
         }
     }
     
@@ -79,6 +117,7 @@ void TexRect::jump(){
         
     }
 }
+
 
 
 void TexRect::draw(){
@@ -103,7 +142,6 @@ void TexRect::draw(){
     
     glDisable(GL_TEXTURE_2D);
 }
-
 
 bool TexRect::contains(float mx, float my){
     return mx >= x && mx <= x+w && my <= y && my >= y - h;

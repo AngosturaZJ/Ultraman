@@ -106,8 +106,8 @@ void App::draw() {
     glLoadIdentity();
     
     background->draw();
-    painting->draw();
     platform->draw();
+    painting->draw();
     
     // We have been drawing everything to the back buffer
     // Swap the buffers to see the result of what we drew
@@ -131,7 +131,8 @@ void App::mouseDrag(float x, float y){
 
 void App::idle(){
     if(moving){
-        painting->jump();
+        //platform->jump();
+        painting->jump(3);
         //painting2->jump();
         redraw();
     }
